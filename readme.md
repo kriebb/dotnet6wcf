@@ -1,6 +1,6 @@
-# wcf
+# wcf (net6)
 
-## install
+## Install dotnet SVC Util
 
 https://docs.microsoft.com/en-us/dotnet/core/additional-tools/dotnet-svcutil-guide?tabs=dotnetsvcutil2x
 
@@ -16,7 +16,7 @@ It was not possible to find any compatible framework version
 
 https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-5.0.17-windows-x64-installer
 
-## Usage
+## Usage 
 
 Usage of a java wsdl: https://www.ebi.ac.uk/europepmc/webservices/soap?wsdl
 
@@ -24,10 +24,34 @@ Usage of a java wsdl: https://www.ebi.ac.uk/europepmc/webservices/soap?wsdl
 
 
 dotnet svcutil https://ec.europa.eu/taxation_customs/tin/services/checkTinService.wsdl
+
 ## Coding
 
-reverse engineer: https://europepmc.org/doc/WSCitationImplPortClient.java
-https://europepmc.org/JaxWs
+### SoapServiceClient
+
+Using XUnit:
+```csharp
+
+    var configuratonBuilder = new ConfigurationBuilder();
+    var configuration = configuratonBuilder.Build();
+
+    var serviceCollection = new ServiceCollection();
+    serviceCollection.AddSoapClient(configuration);
+    serviceCollection.AddLogging(builder => builder.AddXunit(_testOutputHelper));
+    var provider = serviceCollection.BuildServiceProvider(true);
+
+    var soapClient = provider.GetRequiredService<ISoapServiceClient>();
+
+    checkTinRequest input = new checkTinRequest();
+
+    input.countryCode = "BE";
+    input.tinNumber = "71.09.07–213–64"; //https://www.quora.com/What-do-the-11-digits-in-a-Belgian-TIN-tax-identification-number-specify-Do-each-of-them-mean-something
+    var response = await soapClient.ExecuteAsync<checkTinPortType, checkTinRequest, checkTinResponse?>(CheckTin, input, GivenTaxationsCustoms.Url);
+
+    _testOutputHelper.WriteLine(JsonConvert.SerializeObject(response));
+
+```
+### 
 
 Go to SoapServiceClient.cs and the ContractBehavior `UseNamespacesPrefixes` to the `actory.Endpoint.Contract.ContractBehaviors` 
 
@@ -103,4 +127,14 @@ Go to SoapServiceClient.cs and the ContractBehavior `UseNamespacesPrefixes` to t
 </s:Envelope>
 ```
 
-```
+
+
+## Sources
+- Good reading start that explains the problem: https://weblog.west-wind.com/posts/2016/apr/02/
+custom-message-formatting-in-wcf-to-add-all-namespaces-to-the-soap-envelope
+- Rewriting the xml: 
+https://stackoverflow.com/a/58423683
+( code is been enhanced for this purpose  )
+- Background information:
+  - https://docs.microsoft.com/en-us/dotnet/standard/linq/write-queries-xml-namespaces
+  - https://docs.microsoft.com/en-us/dotnet/standard/linq/control-namespace-prefixes

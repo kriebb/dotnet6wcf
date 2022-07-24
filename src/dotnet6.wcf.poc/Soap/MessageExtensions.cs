@@ -96,15 +96,7 @@ public static class MessageExtensions
         // Find all XAttributes that represent namespace declarations
         var nsAttributes = xRoot.Descendants().SelectMany(e => e.Attributes())
             .Where(a => a.IsNamespaceDeclaration).ToList();
-        //When having a default namespace empty, set a value for all those attributes
-        //var defaultNameSpace = XNamespace.Xmlns + GetName("");
-        //foreach (var attrib in nsAttributes)
-        //{
-        //    if (string.IsNullOrWhiteSpace(attrib.Value))
-        //    {
-        //        attrib.SetValue(defaultNameSpace.LocalName);
-        //    }
-        //}
+
 
         // create groupings by common prefix
         var prefixGroups = nsAttributes
