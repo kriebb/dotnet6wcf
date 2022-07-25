@@ -49,9 +49,9 @@ namespace dotnet6.wcf.poc.tests
 
             }
 
-            private async Task<searchPublicationsResponse1?> SearchPublications(WSCitationImpl arg1, searchPublicationsRequest arg2)
+            private Task<searchPublicationsResponse1?> SearchPublications(WSCitationImpl arg1, searchPublicationsRequest arg2)
             {
-                return await  arg1.searchPublicationsAsync(arg2);
+                return  arg1.searchPublicationsAsync(arg2);
 
             }
         }
